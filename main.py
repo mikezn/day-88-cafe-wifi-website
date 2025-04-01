@@ -1,7 +1,12 @@
+from http.client import responses
+
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Boolean
+from flask_wtf import FlaskForm
+from wtforms import StringField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, URL
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -35,6 +40,20 @@ with app.app_context():
     db.create_all()
 
 
+class CafeForm(FlaskForm):
+    name = StringField("Cafe name", validators=[DataRequired()])
+    map_url = StringField("Map URL", validators=[DataRequired(), URL()])
+    img_url = StringField("Image URL", validators=[DataRequired(), URL()])
+    location = StringField("Location", validators=[DataRequired()])
+    has_sockets = BooleanField("Has sockets?")
+    has_toilet = BooleanField("Has toilet?")
+    has_wifi = BooleanField("Has Wi-Fi?")
+    can_take_calls = BooleanField("Can take calls?")
+    seats = StringField("Number of seats", validators=[DataRequired()])
+    coffee_price = StringField("Coffee price")
+    submit = SubmitField("Add Cafe")
+
+
 @app.route('/')
 def get_all_cafes():
     result = db.session.execute(db.select(Cafe))
@@ -43,6 +62,22 @@ def get_all_cafes():
         print(cafe.name)
     return render_template("index.html", cafe_list=cafes_data)
 
+
+@app.route('/add', methods=['GET', 'POST'])
+def add_cafe():
+    form = CafeForm()
+    print(form.validate_on_submit())
+    print(form.errors)
+    if form.validate_on_submit() and request.method == 'POST':
+        cafe = Cafe(
+            name=form.name.data
+        )
+        return redirect(url_for('get_all_cafes'))
+    return render_template('add.html', form=form)
+
+@app.route('/delete/<cafe_id>')
+def delete_cafe(cafe_id):
+    return redirect(url_for('get_all_cafes'))
 
 
 if __name__ == "__main__":
