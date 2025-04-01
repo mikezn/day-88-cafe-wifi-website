@@ -38,10 +38,11 @@ with app.app_context():
 @app.route('/')
 def get_all_cafes():
     result = db.session.execute(db.select(Cafe))
-    cafes = result.scalars().all()
-    for cafe in cafes:
-        print(cafe.location)
-    return render_template("index.html")
+    cafes_data = result.scalars().all()
+    for cafe in cafes_data:
+        print(cafe.name)
+    return render_template("index.html", cafe_list=cafes_data)
+
 
 
 if __name__ == "__main__":
