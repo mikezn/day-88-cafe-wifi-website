@@ -21,6 +21,8 @@ db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
 ###
+
+
 # Cafe TABLE configuration
 class Cafe(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -58,25 +60,36 @@ class CafeForm(FlaskForm):
 def get_all_cafes():
     result = db.session.execute(db.select(Cafe))
     cafes_data = result.scalars().all()
-    for cafe in cafes_data:
-        print(cafe.name)
     return render_template("index.html", cafe_list=cafes_data)
 
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_cafe():
     form = CafeForm()
-    print(form.validate_on_submit())
-    print(form.errors)
     if form.validate_on_submit() and request.method == 'POST':
         cafe = Cafe(
-            name=form.name.data
+            name=form.name.data,
+            location=form.location.data,
+            map_url=form.map_url.data,
+            img_url=form.img_url.data,
+            has_sockets=form.has_sockets.data,
+            has_toilet=form.has_toilet.data,
+            has_wifi=form.has_wifi.data,
+            can_take_calls=form.can_take_calls.data,
+            seats=form.seats.data,
+            coffee_price=form.coffee_price.data
         )
+        db.session.add(cafe)
+        db.session.commit()
         return redirect(url_for('get_all_cafes'))
     return render_template('add.html', form=form)
 
-@app.route('/delete/<cafe_id>')
+
+@app.route('/delete/<cafe_id>', methods=['POST'])
 def delete_cafe(cafe_id):
+    cafe_to_delete = db.get_or_404(Cafe, cafe_id)
+    db.session.delete(cafe_to_delete)
+    db.session.commit()
     return redirect(url_for('get_all_cafes'))
 
 

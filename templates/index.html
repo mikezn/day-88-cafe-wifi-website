@@ -9,42 +9,41 @@
 
         <!-- Floating DELETE button -->
         <form action="{{ url_for('delete_cafe', cafe_id=cafe.id) }}" method="POST"
-              class="position-absolute"
-              style="top: 50%; right: 0; transform: translateY(-50%); z-index: 10;">
-            <button type="submit" class="btn p-0" onclick="return confirm('Delete this cafe?')" title="Delete cafe">
+              class="position-absolute delete-block"
+              style="top: 0; bottom: 0; right: 0; z-index: 10;">
+            <button type="submit" onclick="return confirm('Delete this cafe?')" title="Delete cafe">
                 <i class="fa-solid fa-trash fa-lg text-danger"></i>
             </button>
         </form>
 
-    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-        <div class="col p-4 d-flex flex-column position-static">
-            <strong class="d-inline-block mb-2 text-primary-emphasis">{{ cafe.location }}</strong>
-            <h3 class="mb-0">{{ cafe.name }}</h3>
-            <div class="mb-1 text-body-secondary">{{ cafe.location }}</div>
-<!--            <p class="card-text mb-auto">This is a wider card with supporting text below as a natural lead-in to additional content.</p>-->
-            <p class="card-text mb-auto">Seating: {{ cafe.seats }}</p>
-            <p class="card-text mb-auto">Coffee Price: {{ cafe.coffee_price }}</p>
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <strong class="d-inline-block mb-2 text-primary-emphasis">{{ cafe.location }}</strong>
+                <h3 class="mb-0">{{ cafe.name }}</h3>
+                <div class="mb-1 text-body-secondary">{{ cafe.location }}</div>
+                <p class="card-text mb-auto">Seating: {{ cafe.seats }}</p>
+                <p class="card-text mb-auto">Coffee Price: {{ cafe.coffee_price }}</p>
 
-            <div class="d-flex align-items-center gap-3 mt-2 mb-2">
-                <i class="fa-solid fa-plug fa-2x" style="color:{{ '#28a745' if cafe.has_sockets == 1 else '#ddd' }};"></i>
-                <i class="fa-solid fa-wifi fa-2x" style="color:{{ '#28a745' if cafe.has_wifi == 1 else '#ddd' }};"></i>
-                <i class="fa-solid fa-toilet fa-2x" style="color:{{ '#28a745' if cafe.has_toilet == 1 else '#ddd' }};"></i>
-                <i class="fa-solid fa-phone fa-2x" style="color:{{ '#28a745' if cafe.can_take_calls == 1 else '#ddd' }};"></i>
+                <div class="d-flex align-items-center gap-3 mt-2 mb-2">
+                    <i class="fa-solid fa-plug fa-2x" style="color:{{ '#28a745' if cafe.has_sockets == 1 else '#ddd' }};"></i>
+                    <i class="fa-solid fa-wifi fa-2x" style="color:{{ '#28a745' if cafe.has_wifi == 1 else '#ddd' }};"></i>
+                    <i class="fa-solid fa-toilet fa-2x" style="color:{{ '#28a745' if cafe.has_toilet == 1 else '#ddd' }};"></i>
+                    <i class="fa-solid fa-phone fa-2x" style="color:{{ '#28a745' if cafe.can_take_calls == 1 else '#ddd' }};"></i>
+                </div>
+
+                <a href="{{ cafe.map_url }}" class="icon-link gap-1 icon-link-hover stretched-link">
+                    Map
+                </a>
             </div>
-
-            <a href="{{ cafe.map_url }}" class="icon-link gap-1 icon-link-hover stretched-link">
-                Map
-            </a>
-        </div>
-        <div class="col-auto d-none d-lg-block">
-            <img src="{{ cafe.img_url }}"
-                 alt="{{ cafe.name }}"
-                 class="img-fluid rounded"
-                 style="width: 200px; height: 250px; object-fit: cover;"
-                 onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/p/AF1QipOhkJk2MBtFW1RydPU0zf3bf8upGkTQWyhDpXzZ=s0';">
+            <div class="col-auto d-none d-lg-block">
+                <img src="{{ cafe.img_url }}"
+                     alt="{{ cafe.name }}"
+                     class="img-fluid rounded"
+                     style="width: 200px; height: 250px; object-fit: cover;"
+                     onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/p/AF1QipOhkJk2MBtFW1RydPU0zf3bf8upGkTQWyhDpXzZ=s0';">
+            </div>
         </div>
     </div>
-        </div>
     {% endfor %}
 
     <a href="{{ url_for('add_cafe') }}" class="text-decoration-none text-reset">
@@ -79,6 +78,27 @@
     text-shadow: 0 0 8px #28a745;
     color: #28a745;
 }
+
+.delete-block {
+    width: 60px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+    border-radius: 4px 0 0 4px;
+}
+
+.delete-block:hover {
+    background-color: #ffe5e5; /* light red */
+}
+
+.delete-block button {
+    background: none;
+    border: none;
+    padding: 0;
+    }
 </style>
 
 {% include "footer.html" %}
